@@ -2,8 +2,11 @@
 
 ## Instruction
 Replace ‘DIRECTORY' in server.py with your actual directory
+
 Password: 1111
+
 Server control password: 2111
+
 Enter 2111 in the login page to visit server control
 
 Server adress will auto copied when you start the server
