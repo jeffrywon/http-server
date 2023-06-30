@@ -17,9 +17,10 @@ import time
 from flask import Flask, render_template, send_file, abort, request, jsonify, session, redirect, url_for
 
 app = Flask(__name__)
-app.secret_key = 'junmuncheng'
+app.secret_key = '10260219'
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=10)
-DIRECTORY = r"C:\Users\acer\Desktop\server\file share"
+DIRECTORY = r"C:\Users\acer\Downloads\http-server-main\http-server-main\file share"
+defaultDirectory = r"C:\Users\acer\Downloads\http-server-main\http-server-main\file share"
 ERROR_LOG_FILE = "error_log.txt"
 server_process = None  # 全局变量用于保存服务器进程
 userpage= 'index.html'
@@ -447,7 +448,7 @@ def lock_session():
         session.modified = True
         session['authenticated'] = False
         global DIRECTORY
-        DIRECTORY = r"C:\Users\acer\Desktop\server\file share"
+        DIRECTORY = defaultDirectory
         return jsonify({'message': 'Session locked successfully'})
 
     except Exception as e:
@@ -462,7 +463,7 @@ def reset_session_timeout():
 
 def reset_directory():
     global DIRECTORY
-    DIRECTORY = r"C:\Users\acer\Desktop\server\file share"
+    DIRECTORY = defaultDirectory
 
 
 @app.route('/change_directory', methods=['POST'])
