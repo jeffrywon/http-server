@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Server Control</title>
+    <style>
+        body {
+            background: #f2f2f2;
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333333;
+            margin-top: 0;
+        }
+
+        form {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333333;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .button-wrapper {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .button-wrapper button {
+            padding: 10px 20px;
+            background-color: #4ca2cd;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 15px;
+        }
+
+        .button-wrapper button:hover {
+            background-color: #3582a6;
+        }
+
+        .loader {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            margin-top: 10px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .message {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            height: 30px;
+        }
+
+        .message p {
+            margin: 0;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .failure {
+            color: red;
+        }
+
+
+        @media (max-width: 1000px) {
+            .container {
+                position: absolute;
+                padding: 10px;
+                max-width: 100%;
+                top: 15%;
+                left: 15%;
+            }
+
+            h1 {
+                font-size: 60px;
+                /* 调整标题字体大小 */
+            }
+
+            label {
+                font-size: 50px;
+                /* 调整标签字体大小 */
+            }
+
+            input[type="text"] {
+                padding: 8px;
+                /* 调整输入框内边距 */
+                font-size: 50px;
+                /* 调整输入框字体大小 */
+                max-width: 70%;
+            }
+
+            .button-wrapper {
+                flex-wrap: wrap;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .button-wrapper button {
+                margin-right: 0;
+                margin-bottom: 10px;
+                flex-basis: calc(50% - 5px);
+                max-width: calc(50% - 5px);
+                font-size: 40px;
+                /* 调整按钮字体大小 */
+                padding: 20px 40px;
+                /* 调整按钮内边距 */
+                height: 580px;
+                /* 调整按钮高度 */
+            }
+
+            .message {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-top: 10px;
+                height: 60px;
+                font-size: 40px;
+            }
+
+            .message p {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Server Control</h1>
+        <form id="commandForm">
+            <label for="commandInput">Command:</label>
+            <input type="text" id="commandInput" name="commandInput" required>
+            <div class="button-wrapper">
+                <button type="submit">Send Command</button>
+                <button id="restartButton">Restart Server</button>
+                <button id="endButton">End Server</button>
+                <button id="pauseButton">Pause Server</button>
+                <button id="resumeButton">Resume Server</button>
+                <button id="resetDirectoryButton">Reset Directory</button>
+            </div>
+        </form>
+
+        <div class="message-container"></div>
+    </div>
+
+    <script>
+        document.getElementById("commandForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            executeCommand(document.getElementById("commandInput").value);
+        });
+
+
+        document.getElementById("restartButton").addEventListener("click", function () {
+            if (confirm("Are you sure you want to restart the server?")) {
+                executeCommand("restart");
+            }
+        });
+
+        document.getElementById("endButton").addEventListener("click", function () {
+            if (confirm("Are you sure you want to end the server?")) {
+                executeCommand("end");
+            }
+        });
+
+        document.getElementById("pauseButton").addEventListener("click", function () {
+            if (confirm("Are you sure you want to pause the server?")) {
+                executeCommand("pause");
+            }
+        });
+
+        document.getElementById("resumeButton").addEventListener("click", function () {
+            executeCommand("resume");
+        });
+
+        document.getElementById("resetDirectoryButton").addEventListener("click", function () {
+            executeCommand("reset directory");
+        });
+
+        function executeCommand(command) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "/execute_command");
+            xhr.setRequestHeader("Content-Type", "application/json");
+
+            var loader = document.createElement("div");
+            loader.classList.add("loader");
+            document.querySelector(".container").appendChild(loader);
+
+            xhr.onload = function () {
+                document.querySelector(".container").removeChild(loader);
+
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    displayMessage(response.message, "success");
+                } else {
+                    displayMessage("Failed to send the command", "failure");
+                }
+            };
+
+            xhr.onerror = function () {
+                displayMessage("An error occurred while sending the command", "failure");
+            };
+
+            xhr.send(JSON.stringify({ command: command }));
+        }
+
+        function displayMessage(message, type) {
+            var messageDiv = document.createElement("div");
+            messageDiv.classList.add("message");
+
+            if (type === "success") {
+                messageDiv.classList.add("success");
+            } else if (type === "failure") {
+                messageDiv.classList.add("failure");
+            }
+
+            messageDiv.innerHTML = "<p>" + message + "</p>";
+
+            var messageContainer = document.querySelector(".message-container");
+            messageContainer.appendChild(messageDiv);
+
+            setTimeout(function () {
+                messageDiv.style.opacity = "0";
+                setTimeout(function () {
+                    messageContainer.removeChild(messageDiv);
+                }, 600);
+            }, 3000);
+        }
+    </script>
+</body>
+
+</html>

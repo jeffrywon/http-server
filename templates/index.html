@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>File List</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007bff;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #0056b3;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .button-container .button-group {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .button-container .button-group button {
+            margin-right: 10px;
+        }
+
+
+
+        .download-btn {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* 修改"Select All"标签样式 */
+        .select-all {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            /* 添加间距 */
+            font-size: 18px;
+            /* 修改字体大小 */
+            color: #333;
+            /* 修改颜色 */
+            transition: color 0.3s ease;
+            /* 添加过渡效果 */
+            cursor: pointer;
+            /* 添加鼠标指针样式 */
+        }
+
+        .select-all:hover {
+            color: #0056b3;
+            /* 悬停时改变颜色 */
+        }
+
+        .select-all-label {
+            margin-left: 5px;
+            font-weight: bold;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #ccc;
+            border-radius: 3px;
+            outline: none;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .checkbox:checked {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .checkbox-label {
+            color: #333;
+            transition: color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .checkbox-label:hover {
+            color: #0056b3;
+        }
+
+        .checkbox-label::before {
+            content: "";
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background-color: transparent;
+            border: 2px solid #ccc;
+            border-radius: 3px;
+            margin-right: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .checkbox:checked+.checkbox-label::before {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .checkbox-label:hover::before {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        .checkbox-label span {
+            vertical-align: middle;
+        }
+
+        /* New styles */
+        .hidden {
+            display: none;
+        }
+
+        .visible {
+            display: block;
+        }
+
+        .preview-btn {
+            background-color: transparent;
+            /* 设置为全透明 */
+            color: #007bff;
+            /* 设置为蓝色 */
+            border: none;
+            padding: 6.5px 13px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+        }
+
+        /* 更改悬停时的背景颜色和文字颜色 */
+        .preview-btn:hover {
+            background-color: transparent;
+            /* 设置悬停时的颜色 */
+            color: #0056b3;
+            /* 设置悬停时的文字颜色 */
+        }
+
+        .lock-btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .lock-btn:hover {
+            background-color: #45a049;
+        }
+
+        .lock-btn:active {
+            background-color: #3e8e41;
+        }
+
+        .resetDirectory-btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .resetDirectory-btn:hover {
+            background-color: #45a049;
+        }
+
+        .resetDirectory-btn:active {
+            background-color: #3e8e41;
+        }
+
+        .upload-btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .upload-btn:hover {
+            background-color: #45a049;
+        }
+
+        .upload-btn:active {
+            background-color: #3e8e41;
+        }
+
+        #progress-bar {
+            display: none;
+            /* 初始隐藏进度条 */
+            width: 60%;
+            background-color: #f1f1f1;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 3px;
+            margin-bottom: 20px;
+        }
+
+        #progress {
+            width: 0%;
+            height: 20px;
+            background: linear-gradient(to right, #A5D6A7, #81C784, #66BB6A, #4CAF50);
+
+            border-radius: 3px;
+        }
+
+        .delete-button {
+            background-color: #e85099;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: #ff3333;
+        }
+
+        .dropbtn {
+            background-color: #4c6ef5;
+            color: white;
+            padding: 8px;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            min-width: 130px;
+            z-index: 1;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
+            padding: 8px 0;
+        }
+
+        .dropdown-content button {
+            text-align: left;
+            background-color: transparent;
+            min-width: 130px;
+            color: #333333;
+            padding: 8px 12px;
+            text-decoration: none;
+            display: block;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .dropdown-content button:hover {
+            background-color: #eaeaea;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown:hover .dropbtn {
+            background-color: #3c5af5;
+        }
+    </style>
+    <script>
+        function change_Directory() {
+            var newDirectory = prompt("Enter the new directory path:");
+
+            if (newDirectory !== null) {
+                // 发送 POST 请求到服务器来更改目录
+                fetch('/change_directory', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ directory: newDirectory })
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload(); // 刷新页面以显示新目录的文件列表
+                        } else {
+                            alert('Failed to change directory.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while changing directory.');
+                    });
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+    <div class="container">
+        <h2>File List</h2>
+        <div id="progress-bar">
+            <div id="progress"></div>
+        </div>
+        <div class="button-container">
+            <label class="select-all" for="select-all-checkbox">
+                <input id="select-all-checkbox" type="checkbox">
+                <span class="select-all-label">Select All</span>
+            </label>
+            <div class="button-group">
+                <button class="download-btn hidden" onclick="downloadSelected()">Download Selected</button>
+                <button class="resetDirectory-btn" onclick="getParentDirectory()">Return</button>
+                <button class="lock-btn" onclick="lockSession()">Lock Now</button>
+                <button class="upload-btn" onclick="uploadFile()">Upload File</button>
+                <input id="file-input" type="file" style="display: none;">
+                <button class="paste-button" onclick="handlePasteButtonClick()">Paste</button>
+            </div>
+        </div>
+
+        <div class="file-list-container">
+            <table>
+                <tr>
+                    <th></th>
+                    <th>File Name</th>
+                    <th>File Size</th>
+                    <th>Preview</th>
+                    <th>Action </th>
+                </tr>
+                {% for file in files %}
+                {% if file.name != 'selected_files.zip' and file.name != 'templates' %}
+                <tr>
+                    <td class="checkbox-container">
+                        <input class="checkbox" type="checkbox" name="selected_files" value="{{ file.name }}">
+                        <label class="checkbox-label" for="{{ file.name }}"><span></span></label>
+                    </td>
+                    <td>
+                        {% if file.type == 'file' %}
+                        <a href="/download/{{ file.name }}"
+                            style="display: inline-block; max-width: 500px; word-break: break-all;">{{ file.name
+                            }}</a>
+                        {% else %}
+                        <a href="#"
+                            onclick="event.preventDefault(); getDirectory('{{ currentDirectory }}', '{{ file.name }}')"
+                            style="font-weight: bold;">{{ file.name }}</a>
+
+
+                        {% endif %}
+
+                    </td>
+                    <td>{{ file.size }}</td>
+                    <td><button class="preview-btn" onclick="openPreview('{{ file.name }}')">Preview</button></td>
+                    <td>
+                        <div class="dropdown">
+                            <button class="dropbtn">Actions</button>
+                            <div class="dropdown-content">
+                                <button class="delete-button"
+                                    onclick="handleDeleteButtonClick('{{ file.name }}')">Delete</button>
+                                <button class="move-button" onclick="handleMoveButtonClick('{{ file.name }}')">Move
+                                    to</button>
+                                <button class="rename-button" data-file="{{ file.name }}">Rename</button>
+                                <button class="copy-path-button"
+                                    onclick="handleCopyPathButtonClick('{{ file.name }}')">Copy path</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+    <script>
+        const selectAllCheckbox = document.querySelector('#select-all-checkbox');
+        const checkboxes = document.querySelectorAll('input[name="selected_files"]');
+        const downloadBtn = document.querySelector('.download-btn');
+        const renameButtons = document.querySelectorAll('.rename-button');
+
+        selectAllCheckbox.addEventListener('change', () => {
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+            });
+            updateDownloadBtnVisibility();
+        });
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                updateDownloadBtnVisibility();
+            });
+        });
+
+        // 为每个重命名按钮添加点击事件处理函数
+        renameButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // 弹出输入框，要求用户输入新名称
+                const newFileName = prompt('Enter the new file name:');
+
+                // 获取文件名和当前路径
+                const fileName = button.dataset.file;
+                const filePath = encodeURIComponent(fileName);
+
+                // 发送异步请求来重命名文件
+                fetch('/rename_file', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        file_path: filePath,
+                        new_name: newFileName
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert(data.message);
+                        // 重新加载文件列表
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Error renaming file:', error);
+                    });
+            });
+        });
+
+        let fileToMove = '';
+
+        function hidemovebutton() {
+            document.querySelector('.move-button').style.display = 'none';
+        }
+
+
+        function handleMoveButtonClick(file_name) {
+            hidemovebutton()
+            // 发送POST请求以获取文件路径
+            fetch('/get_file_path', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    file_name: file_name
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const message = data.message;
+                    if (message === 'File path retrieved successfully') {
+                        // 保存文件路径到会话存储
+                        sessionStorage.setItem('file_path', data.file_path);
+                        // 显示"Paste"按钮并隐藏"Move to"按钮
+                        document.querySelector('.move-button').style.display = 'none';
+                    } else {
+                        console.error('Error retrieving file path:', message);
+                        alert(message);
+                    }
+                })
+                .catch(error => console.error('Error retrieving file path:', error));
+        }
+
+        function handlePasteButtonClick() {
+            // 发送GET请求以获取当前路径
+            fetch('/get_directory1', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const current_directory = data.directory;
+
+                    // 从会话存储中获取文件路径
+                    const file_path = sessionStorage.getItem('file_path');
+                    if (file_path) {
+                        // 发送POST请求以移动文件
+                        fetch('/move_file', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                file_path: file_path,
+                                current_directory: current_directory
+                            })
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                const message = data.message;
+                                console.log('Move file response:', message);
+
+                                // 文件移动成功后隐藏"Paste"按钮并显示"Move to"按钮
+                                if (message === 'File moved successfully') {
+                                    document.querySelector('.move-button').style.display = 'inline';
+                                    location.reload();
+                                }
+                            })
+                            .catch(error => console.error('Error moving file:', error));
+                    }
+                })
+                .catch(error => console.error('Error retrieving current directory:', error));
+        }
+
+
+
+
+
+        function deleteFile(file_path) {
+            const url = '/delete_file';
+            const data = JSON.stringify({ file_path });
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: data,
+            })
+                .then(response => response.json())
+                .then(result => {
+                    location.reload(); // 刷新页面以更新文件列表
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // 更新删除按钮的点击事件处理程序
+        function handleDeleteButtonClick(file_path) {
+            const confirmDelete = confirm('Are you sure you want to delete this file?');
+            if (confirmDelete) {
+                deleteFile(file_path);
+            }
+        }
+
+
+        function showProgressBar() {
+            document.getElementById('progress-bar').style.display = 'block';
+        }
+
+        function hideProgressBar() {
+            document.getElementById('progress-bar').style.display = 'none';
+        }
+
+        function uploadFile() {
+            document.getElementById('file-input').click();
+        }
+
+        document.getElementById('file-input').addEventListener('change', function () {
+            var fileInput = this;
+            var file = fileInput.files[0];
+
+            if (file) {
+                showProgressBar(); // 显示进度条
+
+                var formData = new FormData();
+                formData.append('file', file);
+
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/upload', true);
+                xhr.upload.onprogress = function (e) {
+                    if (e.lengthComputable) {
+                        var percentage = (e.loaded / e.total) * 100;
+                        document.getElementById('progress').style.width = percentage + '%';
+                    }
+                };
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        hideProgressBar(); // 隐藏进度条
+
+                        if (xhr.status === 200) {
+                            var response = JSON.parse(xhr.responseText);
+                            console.log(response.message);
+                            alert('File uploaded successfully');
+                            location.reload();
+                        } else {
+                            alert('File upload failed');
+                        }
+                    }
+                };
+                xhr.send(formData);
+            }
+        });
+
+        function handleCopyPathButtonClick(fileName) {
+            // 发送AJAX请求
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/get_directory', true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var directory = response.directory;
+                    var path = directory + '\\' + fileName;
+
+                    // 执行复制路径的操作
+                    copyToClipboard(path);
+                }
+            };
+            xhr.send();
+        }
+
+        // 复制到剪贴板的函数
+        function copyToClipboard(text) {
+            var textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+
+
+        function getParentDirectory() {
+            // 发送 GET 请求到服务器来获取当前路径
+            fetch('/get_directory', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    var currentDirectory = data.directory;
+                    var parentDirectory = currentDirectory.substring(
+                        0,
+                        currentDirectory.lastIndexOf('\\')
+                    );
+
+                    // 发送 POST 请求到服务器来更改目录
+                    fetch('/change_directory', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ directory: parentDirectory })
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                location.reload(); // 刷新页面以显示新目录的文件列表
+                            } else {
+                                console.error('Failed to change directory.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+
+
+        function updateDownloadBtnVisibility() {
+            const checkedCheckboxes = document.querySelectorAll('input[name="selected_files"]:checked');
+            if (checkedCheckboxes.length > 0) {
+                downloadBtn.classList.remove('hidden');
+                downloadBtn.classList.add('visible');
+            } else {
+                downloadBtn.classList.remove('visible');
+                downloadBtn.classList.add('hidden');
+            }
+        }
+
+        function redirectDownloadLink(link) {
+            window.location.href = link;
+        }
+
+        function downloadSelected() {
+            const selectedFiles = [];
+            const checkboxes = document.querySelectorAll('input[name="selected_files"]:checked');
+
+            checkboxes.forEach(function (checkbox) {
+                selectedFiles.push(checkbox.value);
+            });
+
+            if (selectedFiles.length > 0) {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/download_selected', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        const downloadLink = xhr.responseText;
+                        redirectDownloadLink(downloadLink);
+                    }
+                };
+                xhr.send(JSON.stringify(selectedFiles));
+            }
+        }
+
+
+
+
+        function previewImage(fileName) {
+            const imageUrl = '/preview/' + fileName;
+            window.open(imageUrl);
+        }
+
+        function openPreview(fileName) {
+            const fileExtension = fileName.split('.').pop().toLowerCase();
+            if (fileExtension === 'jpg' || fileExtension === 'jpeg' || fileExtension === 'png' || fileExtension === 'gif' || fileExtension === 'webp') {
+                const imageUrl = '/preview/' + fileName;
+                window.open(imageUrl, '_blank');
+            } else if (fileExtension === 'mp4' || fileExtension === 'avi' || fileExtension === 'mov' || fileExtension === 'wmv') {
+                const videoUrl = '/preview/' + fileName;
+                window.open(videoUrl, '_blank');
+            } else if (fileExtension === 'pdf' || fileExtension === 'txt' || fileExtension === 'html') {
+                const fileUrl = '/preview/' + fileName;
+                window.open(fileUrl, '_blank');
+            } else {
+                alert('Unsupported file type for preview');
+            }
+        }
+
+
+        function lockSession() {
+            // 发送请求到服务器以清零会话超时时间
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/lock_session', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    // 重定向到登录页面
+                    window.location.href = '/';
+                }
+            };
+            xhr.send();
+        }
+
+        function getDirectory(currentDirectory, fileName) {
+            fetch('/get_directory')
+                .then(response => response.json())
+                .then(data => {
+                    const directory = data.directory;
+                    if (directory) {
+                        const newDirectory = directory.replace(/\//g, '\\') + '\\' + fileName;
+                        change_Directory(newDirectory);
+                    }
+                });
+        }
+
+        function change_Directory(newDirectory) {
+            // 发送 POST 请求到服务器来更改目录
+            fetch('/change_directory', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ directory: newDirectory })
+
+            })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                        // 刷新页面以显示新目录的文件列表
+                    } else {
+                        console.error('Failed to change directory.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+
+
+    </script>
+</body>
+
+</html>
