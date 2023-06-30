@@ -1,7 +1,7 @@
 # http-server
 
 ## Instruction
-Replace ‘DIRECTORY' in server.py with your actual directory
+Replace ‘DIRECTORY' and 'defaultDirectory' in server.py with your actual directory
 
 Password: 1111
 
